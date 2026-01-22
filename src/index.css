@@ -1,0 +1,16 @@
+@import url("https://fonts.googleapis.com/css2?family=Outfit&family=Playfair:ital,opsz,wght@0,5..1200,300..900;1,5..1200,300..900&display=swap");
+
+@import "tailwindcss";
+
+@theme {
+  --font-outfit: "Outfit", sans-serif;
+  --font-display: "Playfair", serif;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-outfit);
+    /* Ensure the background isn't hiding your navbar content */
+    @apply bg-white text-black; 
+  }
+}
