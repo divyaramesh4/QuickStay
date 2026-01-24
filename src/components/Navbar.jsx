@@ -1,11 +1,11 @@
-import React from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { assets } from "../assets/assets";
 import { useClerk, useUser, UserButton } from "@clerk/clerk-react";
-const bookIcon = () => { 
+const bookIcon = () => {
     <svg className="w-4 h-4 text-gray-700" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" >
-    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
-</svg>
+        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 19V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v13H7a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h12M9 3v14m7 0v4" />
+    </svg>
 }
 
 const Navbar = () => {
@@ -17,14 +17,22 @@ const Navbar = () => {
     ];
 
 
-    const [isScrolled, setIsScrolled] = React.useState(false);
-    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
     const { openSignIn } = useClerk()
     const { user } = useUser()
     const navigate = useNavigate()
     const location = useLocation()
 
-    React.useEffect(() => {
+    useEffect(() => {
+        if (location.pathname !== '/') {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
+            setIsScrolled(true);
+            return;
+        } else {
+            setIsScrolled(false);
+        }
+        setIsScrolled(prev => location.pathname != '/' ? true : false)
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 10);
         };
@@ -34,7 +42,7 @@ const Navbar = () => {
 
     return (
 
-        <nav className={`fixed top-0 left-0 bg-indigo-500 w-full flex items-center justify-between px-4 md:px-16 lg:px-24 xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
+        <nav className={`fixed top-0 left-0 bg-blue-400 w-full flex items-center justify-between px-4 md:px-16  xl:px-32 transition-all duration-500 z-50 ${isScrolled ? "bg-white/80 shadow-md text-gray-700 backdrop-blur-lg py-3 md:py-4" : "py-4 md:py-6"}`}>
 
             {/* Logo */}
             <Link to={"/"} className="flex items-center gap-2">
@@ -49,7 +57,7 @@ const Navbar = () => {
                         <div className={`${isScrolled ? "bg-gray-700" : "bg-white"} h-0.5 w-0 group-hover:w-full transition-all duration-300`} />
                     </a>
                 ))}
-                <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} text-xl transition-all cursor-pointer`}>
+                <button className={`border px-4 py-1 text-sm font-light rounded-full cursor-pointer ${isScrolled ? 'text-black' : 'text-white'} text-xl transition-all cursor-pointer `} onClick={() => navigate('/owner')}>
                     Dashboard
                 </button>
             </div>
@@ -60,7 +68,7 @@ const Navbar = () => {
                 {user ?
                     (<UserButton>
                         <UserButton.MenuItems>
-                            <UserButton.Action label="My Bookings" labelIcon={bookIcon()} onClick={() => {navigate('/my-bookings')}} />
+                            <UserButton.Action label="My Bookings" labelIcon={bookIcon()} onClick={() => { navigate('/my-bookings') }} />
                         </UserButton.MenuItems>
                     </UserButton>)
                     :
@@ -87,18 +95,13 @@ const Navbar = () => {
                     </a>
                 ))}
 
-                <button className="border px-4 py-1 text-sm font-light rounded-full cursor-pointer transition-all">
+                {user && <button className="border px-4 py-1 text-sm font-light roun ded-full cursor-pointer transition-all" onClick={() => navigate('/owner')}>
                     Dashboard
-                </button>
-                {user ?
-                    (<UserButton>
-                        <UserButton.MenuItems>
-                            <UserButton.Action label="My Bookings" labelIcon={bookIcon()} onClick={() => {navigate('/my-bookings')}} />
-                        </UserButton.MenuItems>
-                    </UserButton>):(
-                <button onClick={openSignIn} className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500 cursor-pointer">
+                </button>}
+
+                {!user && <button onClick={openSignIn} className="bg-black text-white px-8 py-2.5 rounded-full transition-all duration-500 cursor-pointer">
                     Login
-                </button>)}
+                </button>}
             </div>
         </nav>
 
